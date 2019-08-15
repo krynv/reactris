@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+
 import Stage from './Stage';
 import Display from './Display';
 import StartButton from './StartButton';
 
+import { createStage } from '../gameHelpers';
 import { StyledTetrisWrapper, StyledTetris } from './styles/StyledTetris';
 
 import { usePlayer } from '../hooks/usePlayer';
@@ -13,7 +15,7 @@ const Tetris = () => {
     const [dropTime, setDropTime] = useState(null);
     const [gameOver, setGameOver] = useState(false); // not game over when we start the game
 
-    const [player] = usePlayer();
+    const [player, updatePlayerPos, resetPlayer] = usePlayer();
     const [stage, setStage] = useStage(player);
 
 
@@ -21,8 +23,42 @@ const Tetris = () => {
     console.log('re-render');
 
 
+    const movePlayer = (dir) => {
+        updatePlayerPos({ x: dir, y: 0 });
+    }
+
+    const startGame = () => {
+        // reset the game
+        setStage(createStage());
+        resetPlayer();
+    }
+
+    const drop = () => {
+        updatePlayerPos({ x: 0, y: 1, collided: false });
+    }
+
+    const dropPlayer = () => {
+        drop();
+    }
+
+    const move = ({ keyCode }) => {
+        if (!gameOver) {
+            if (keyCode === 37) { // left arrow
+                movePlayer(-1); // move to the left
+            }
+            else if (keyCode === 39) { //right arrow
+                movePlayer(1); // move to the left
+            }
+            else if (keyCode === 40) { // down arrow
+                dropPlayer(); // drop the block
+            }
+        }
+    }
+
+
     return (
-        <StyledTetrisWrapper>
+        // making it so that we can use keys everywhere otherwise it will mean that we will have to click on the screen to move with arrow keys
+        <StyledTetrisWrapper role="button" tabIndex="0" onKeyDown={e => move(e)}>
             <StyledTetris>
                 <Stage stage={stage} />
 
@@ -37,7 +73,7 @@ const Tetris = () => {
                                 <Display text="Level" />
                             </div>
                         )}
-                    <StartButton />
+                    <StartButton onClick={startGame()} />
                 </aside>
             </StyledTetris>
         </StyledTetrisWrapper>
