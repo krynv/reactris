@@ -33,7 +33,7 @@ export const TETROMINOS = {
 
     O: { // the O/ cube looking one
         shape: [
-            ['O', 'O']
+            ['O', 'O'],
             ['O', 'O']
         ],
         colour: '223, 217, 36'
