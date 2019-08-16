@@ -7,6 +7,7 @@ import StartButton from './StartButton';
 import { createStage, checkCollision } from '../gameHelpers';
 import { StyledTetrisWrapper, StyledTetris } from './styles/StyledTetris';
 
+import { useInterval } from '../hooks/useInterval';
 import { usePlayer } from '../hooks/usePlayer';
 import { useStage } from '../hooks/useStage';
 
@@ -32,6 +33,7 @@ const Tetris = () => {
         console.log("test")
         // reset game
         setStage(createStage());
+        setDropTime(1000); // 1 second
         resetPlayer();
         setGameOver(false);
     }
@@ -50,7 +52,19 @@ const Tetris = () => {
         }
     }
 
+    const keyUp = ({ keyCode }) => {
+        if (!gameOver) {
+            if (keyCode === 40) { // down key
+                console.log(`interval on`);
+                setDropTime(1000);
+            }
+        }
+    }
+
     const dropPlayer = () => {
+        console.log(`interval off`);
+        // stop interval when player pressed the down key
+        setDropTime(null);
         drop();
     }
 
@@ -72,9 +86,13 @@ const Tetris = () => {
     }
 
 
+    useInterval(() => {
+        drop();
+    }, dropTime)
+
     return (
         // making it so that we can use keys everywhere otherwise it will mean that we will have to click on the screen to move with arrow keys
-        <StyledTetrisWrapper role="button" tabIndex="0" onKeyDown={e => move(e)}>
+        <StyledTetrisWrapper role="button" tabIndex="0" onKeyDown={e => move(e)} onKeyUp={keyUp}>
             <StyledTetris>
                 <Stage stage={stage} />
                 <aside>
@@ -90,7 +108,7 @@ const Tetris = () => {
                     <StartButton callback={startGame} />
                 </aside>
             </StyledTetris>
-        </StyledTetrisWrapper>
+        </StyledTetrisWrapper >
     );
 };
 
