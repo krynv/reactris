@@ -50,9 +50,9 @@ export const TETROMINOS = {
 
     T: { // the T looking one
         shape: [
-            [0, 0, 0],
             ['T', 'T', 'T'],
             [0, 'T', 0],
+            [0, 0, 0],
         ],
         colour: '132, 61, 198'
     },
